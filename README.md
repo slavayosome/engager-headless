@@ -43,6 +43,12 @@ npm run up
 
 Leave this command running to serve the scheduler and worker. Ctrl-C stops them. The one-shot status and skills commands also work while the background process is stopped. Open a new session of your configured agent to use the installed MCP tools and skills. Model calls require your own authenticated agent. LinkedIn operations require your own connected account. Automated activity can lead to account restrictions.
 
+To sign in without the dashboard, run this in a second terminal from the checkout. Enter your credentials in the browser window on your Mac. If you need more time, repeat the check with `"recheck":true` in place of `"openSignIn":true`.
+
+```sh
+npm run --silent engager -- call get_channel '{"include":["connection"],"probe":true,"openSignIn":true,"waitForSignInMs":30000}'
+```
+
 To request the same confirmation from a terminal, substitute your draft's campaign ID and run this in your logged-in Mac session.
 
 ```sh
