@@ -1,0 +1,2 @@
+ALTER TABLE "email_delivery_receipts" DROP CONSTRAINT "email_delivery_receipts_kind_chk";--> statement-breakpoint
+ALTER TABLE "email_delivery_receipts" ADD CONSTRAINT "email_delivery_receipts_kind_chk" CHECK ("email_delivery_receipts"."kind" in ('batch_refill', 'lead_hot', 'lead_nudge', 'checkpoint', 'runtime_alert', 'trial_started', 'trial_ending', 'payment_failed'));

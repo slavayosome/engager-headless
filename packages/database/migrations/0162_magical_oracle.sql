@@ -1,0 +1,1 @@
+ALTER TABLE "candidate_draft_requests" ADD COLUMN "judgment_policy" text DEFAULT 'configured_background' NOT NULL;

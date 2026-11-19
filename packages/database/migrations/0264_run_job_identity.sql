@@ -1,0 +1,1 @@
+ALTER TABLE "automation_runs" ADD COLUMN "job_id" bigint;

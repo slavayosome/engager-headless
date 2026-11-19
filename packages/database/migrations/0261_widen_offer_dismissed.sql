@@ -1,0 +1,1 @@
+ALTER TABLE "campaigns" ADD COLUMN "widen_offer_dismissed_at" bigint;

@@ -1,0 +1,2 @@
+ALTER TABLE "message_status_events" ADD COLUMN "reason" text;--> statement-breakpoint
+ALTER TABLE "message_status_events" ADD CONSTRAINT "message_status_events_reason_check" CHECK ("message_status_events"."reason" is null or "message_status_events"."reason" in ('owner_unscheduled'));

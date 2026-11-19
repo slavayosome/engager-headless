@@ -1,0 +1,1 @@
+ALTER TABLE "candidate_draft_requests" ADD COLUMN "recommended" jsonb;

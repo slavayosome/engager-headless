@@ -1,0 +1,3 @@
+ALTER TABLE "listening_phrase_changes" ADD COLUMN "undoes" bigint;--> statement-breakpoint
+CREATE UNIQUE INDEX "listening_phrase_changes_org_undoes_unq" ON "listening_phrase_changes" USING btree ("organization_id","undoes") WHERE "listening_phrase_changes"."undoes" is not null;--> statement-breakpoint
+ALTER TABLE "listening_phrase_changes" ADD CONSTRAINT "listening_phrase_changes_undoes_check" CHECK ("listening_phrase_changes"."undoes" is null or "listening_phrase_changes"."actor" = 'owner');

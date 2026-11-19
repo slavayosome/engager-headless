@@ -1,0 +1,1 @@
+ALTER TABLE "campaigns" DROP COLUMN "agent_interval_minutes";

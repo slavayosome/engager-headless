@@ -1,0 +1,1 @@
+ALTER TABLE "commercial_offer_intents" ADD COLUMN "provider_schedule_id" text;

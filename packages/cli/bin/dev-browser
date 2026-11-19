@@ -1,0 +1,5 @@
+#!/bin/sh
+# Vendor sign-in override: validated auth URL in the owner's chosen browser.
+set -eu
+dev_bin_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+exec "$dev_bin_dir/../../runtime-resources/node/bin/node" "$dev_bin_dir/engager.mjs" dev-open-agent-auth-url "$@"

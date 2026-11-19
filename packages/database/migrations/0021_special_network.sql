@@ -1,0 +1,1 @@
+ALTER TABLE "products" ADD COLUMN "ingest_stage" text;

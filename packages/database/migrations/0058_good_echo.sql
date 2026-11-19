@@ -1,0 +1,1 @@
+ALTER TABLE "onboarding_radar_previews" ADD COLUMN "setup_proof_subscription_id" text;

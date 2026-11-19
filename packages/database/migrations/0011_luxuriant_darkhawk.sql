@@ -1,0 +1,1 @@
+ALTER TABLE "discovery_state" DROP COLUMN "last_reset_at";

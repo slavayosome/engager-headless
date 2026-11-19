@@ -1,0 +1,2 @@
+ALTER TABLE "automation_runs" ADD COLUMN "verify_for_owner_count" integer DEFAULT 0 NOT NULL;--> statement-breakpoint
+ALTER TABLE "automation_runs" ADD CONSTRAINT "automation_runs_verify_for_owner_count_check" CHECK ("automation_runs"."verify_for_owner_count" >= 0);

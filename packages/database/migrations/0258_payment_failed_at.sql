@@ -1,0 +1,1 @@
+ALTER TABLE "subscriptions" ADD COLUMN "payment_failed_at" bigint;

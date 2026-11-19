@@ -1,0 +1,2 @@
+ALTER TABLE "device_auth_requests" ADD COLUMN "delivery_acknowledged_at" bigint;--> statement-breakpoint
+ALTER TABLE "device_auth_requests" ADD CONSTRAINT "device_auth_requests_delivery_acknowledged_state_check" CHECK ("device_auth_requests"."delivery_acknowledged_at" is null or ("device_auth_requests"."delivery_protocol" = 2 and "device_auth_requests"."status" = 'claimed' and "device_auth_requests"."api_key_id" is not null and "device_auth_requests"."delivery_expires_at" is null and "device_auth_requests"."token" is null));

@@ -1,0 +1,2 @@
+ALTER TABLE "incoming_comments" DROP CONSTRAINT "incoming_comments_source_links_check";--> statement-breakpoint
+ALTER TABLE "incoming_comments" ADD CONSTRAINT "incoming_comments_source_links_check" CHECK (("incoming_comments"."source" = 'own_post' and "incoming_comments"."discovered_post_id" is null and "incoming_comments"."parent_message_id" is null) or ("incoming_comments"."source" = 'our_comment_thread' and "incoming_comments"."parent_message_id" is not null)) NOT VALID;

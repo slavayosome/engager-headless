@@ -1,0 +1,1 @@
+ALTER TABLE "leads" ADD COLUMN "research_requested_at" bigint;

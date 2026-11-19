@@ -1,0 +1,33 @@
+-- The mode quintet loses two of its five columns. `automation_mode` said HOW
+-- FAR the pipeline went (discover | draft | autopilot) and `mode` was the
+-- three-mode selector (curate | review | auto); together they were the ladder
+-- Radar no longer has. What runs unattended is a row in `automations` with its
+-- publish stage armed, so a level on the campaign had nothing left to steer.
+-- Every reader but one was retired first, one landing at a time. The last —
+-- `updateCampaignOp`'s comment-Auto-post consent clear, which also required the
+-- row to STORE 'autopilot' — goes in this same commit, which widens that clear
+-- to every down-shift. That is the landing's one behaviour change; the DDL
+-- itself decides nothing.
+--
+-- DESTRUCTIVE, AND NOT REVERTABLE BY `git revert` ALONE. This is the one thing
+-- to know before applying it. A bare drizzle `.select()` enumerates the columns
+-- `schema.ts` declares rather than emitting `SELECT *`, so a binary built from
+-- any earlier tree issues `select …, "mode", "automation_mode" …` and takes
+-- 42703 undefined_column on EVERY campaign read. Reverting the commit restores
+-- the declarations but not the columns; recovering a database this has been
+-- applied to means re-adding both (nullable, no default) by hand first.
+--
+-- Dropped values are not preserved. Both columns have been frozen constants
+-- ('discover' and 'curate') since T-3.5 retired their last writer; a database
+-- that stopped taking migrations between 0110 (which backfilled `mode` per row)
+-- and T-3.5 holds varying values instead.
+--
+-- `run_mode` and `drafting_mode` deliberately survive (Phase 8 retires them;
+-- `run_mode = 'shadow'` is still the live-send fence), and `approval_mode` keeps
+-- both its column and its declared range — 0120 collapsed the VALUES the rows
+-- held, not the type. Verified at authoring time: no CHECK on `campaigns` and
+-- neither of its indexes references a dropped column, so nothing is rebuilt
+-- here. Migrations 0110 and 0115 write and read `campaigns.mode` and still run
+-- before this one on a fresh database: immutable history, unedited.
+ALTER TABLE "campaigns" DROP COLUMN "automation_mode";--> statement-breakpoint
+ALTER TABLE "campaigns" DROP COLUMN "mode";

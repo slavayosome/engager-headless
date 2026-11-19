@@ -1,0 +1,4 @@
+ALTER TABLE "campaigns" ADD COLUMN "comment_auto_post_consented_at" bigint;--> statement-breakpoint
+ALTER TABLE "campaigns" ADD COLUMN "comment_auto_post_consent_version" integer;--> statement-breakpoint
+ALTER TABLE "campaigns" ADD COLUMN "comment_auto_post_consented_by" text;--> statement-breakpoint
+ALTER TABLE "campaigns" ADD CONSTRAINT "campaigns_comment_auto_post_consent_check" CHECK (("campaigns"."comment_auto_post_consented_at" is null and "campaigns"."comment_auto_post_consent_version" is null and "campaigns"."comment_auto_post_consented_by" is null) or ("campaigns"."comment_auto_post_consented_at" is not null and "campaigns"."comment_auto_post_consent_version" > 0 and "campaigns"."comment_auto_post_consented_by" is not null));

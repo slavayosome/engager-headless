@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD CONSTRAINT "users_credentials_only_mfa_check" CHECK ("users"."password_hash" is not null or ("users"."mfa_enabled" = false and "users"."totp_secret" is null and "users"."recovery_codes" is null));

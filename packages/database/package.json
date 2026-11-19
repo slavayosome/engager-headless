@@ -1,0 +1,39 @@
+{
+  "name": "@engager/database",
+  "version": "0.0.0",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "exports": {
+    ".": "./client.ts",
+    "./schema": "./schema.ts",
+    "./bootstrap-local-org": "./bootstrap-local-org.ts",
+    "./tenant": "./tenant.ts",
+    "./poolConfig": "./poolConfig.ts",
+    "./rls": "./rls.ts",
+    "./export-manifest": "./export-manifest.ts",
+    "./copy-org": "./copy-org.ts",
+    "./portable-export": "./portable-export.ts",
+    "./portable-restore": "./portable-restore.ts",
+    "./guard": "./guard.ts",
+    "./environment": "./environment.ts",
+    "./executorLock": "./executorLock.ts",
+    "./migrateDatabase": "./migrateDatabase.ts",
+    "./onboardingMigrationFork": "./onboardingMigrationFork.ts",
+    "./readiness": "./readiness.ts",
+    "./release-identity": "./release-identity.ts"
+  },
+  "scripts": {
+    "db:generate": "npm --prefix ../.. run db:generate --",
+    "db:migrate": "npm --prefix ../.. run db:migrate",
+    "db:studio": "drizzle-kit studio --config=drizzle.config.ts"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.2",
+    "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.20.0",
+    "drizzle-kit": "^0.31.10"
+  }
+}

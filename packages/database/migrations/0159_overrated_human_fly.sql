@@ -1,0 +1,1 @@
+ALTER TABLE "ai_usage" ADD COLUMN "local_agent_report" jsonb;

@@ -1,0 +1,1 @@
+ALTER TABLE "channels" ADD COLUMN "hosted_browser_create_at" bigint;

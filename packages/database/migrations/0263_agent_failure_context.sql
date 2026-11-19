@@ -1,0 +1,1 @@
+ALTER TABLE "automation_runs" ADD COLUMN "agent_failure" jsonb;

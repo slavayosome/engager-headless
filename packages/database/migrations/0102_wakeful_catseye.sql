@@ -1,0 +1,2 @@
+ALTER TABLE "candidate_draft_requests" ADD COLUMN "deliverable" text DEFAULT 'draft' NOT NULL;--> statement-breakpoint
+ALTER TABLE "candidate_draft_requests" ADD COLUMN "angles" jsonb DEFAULT '[]'::jsonb NOT NULL;

@@ -1,0 +1,1 @@
+CREATE INDEX "jobs_org_type_updated_idx" ON "jobs" USING btree ("organization_id","type","updated_at" DESC NULLS LAST);

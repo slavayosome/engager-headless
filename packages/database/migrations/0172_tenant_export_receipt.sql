@@ -1,0 +1,1 @@
+ALTER TABLE "tenant_runtimes" ADD COLUMN "export_receipt_at" bigint;

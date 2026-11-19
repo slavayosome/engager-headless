@@ -1,0 +1,1 @@
+ALTER TABLE "organizations" ADD CONSTRAINT "organizations_onboarding_operation_mode_check" CHECK ("organizations"."onboarding_operation_mode" is null or "organizations"."onboarding_operation_mode" in ('runner', 'interactive'));

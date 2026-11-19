@@ -1,0 +1,1 @@
+ALTER TABLE "leads" ADD COLUMN "dm_trace" jsonb;

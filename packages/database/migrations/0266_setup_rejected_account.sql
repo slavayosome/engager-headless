@@ -1,0 +1,1 @@
+ALTER TABLE "organizations" ADD COLUMN "rejected_linkedin_account_id" text;

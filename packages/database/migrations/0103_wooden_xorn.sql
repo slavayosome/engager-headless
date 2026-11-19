@@ -1,0 +1,1 @@
+ALTER TABLE "mcp_app_card_sessions" ADD COLUMN "adopted_at" bigint;

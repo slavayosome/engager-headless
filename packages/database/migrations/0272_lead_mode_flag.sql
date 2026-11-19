@@ -1,0 +1,1 @@
+ALTER TABLE "campaigns" ADD COLUMN "lead_mode" boolean DEFAULT false NOT NULL;

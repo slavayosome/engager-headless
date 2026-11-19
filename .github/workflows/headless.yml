@@ -1,0 +1,39 @@
+name: Headless install
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  install:
+    runs-on: macos-15
+    timeout-minutes: 30
+    env:
+      ENGAGER_TELEMETRY: "off"
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Install prerequisites
+        run: |
+          brew install node@22 postgresql@17 uv
+          echo "$(brew --prefix node@22)/bin" >> "$GITHUB_PATH"
+          echo "$(brew --prefix postgresql@17)/bin" >> "$GITHUB_PATH"
+          brew services start postgresql@17
+      - name: Build and install from source
+        run: |
+          npm ci
+          npm run build
+          npm run engager -- init --non-interactive
+      - name: Verify an account-free install
+        run: |
+          npm run --silent engager -- call get_status | jq -e '.health.connection.connected == false and (.setup | type == "object")'
+          npm run --silent engager -- call list_skills | jq -e 'any(.skills[]; .name == "engager-setup")'
+          node_bin=$(command -v node)
+          (cd "$RUNNER_TEMP" && PATH=/usr/bin:/bin "$node_bin" "$GITHUB_WORKSPACE/packages/cli/bin/engager.mjs" call get_status) | jq -e '.health.connection.connected == false'
+          before=$(shasum -a 256 .env)
+          npm run engager -- init --non-interactive
+          test "$before" = "$(shasum -a 256 .env)"
+          test ! -d apps/dashboard
+          test ! -d packages/cli/dist/dashboard
+      - name: Run headless regression tests
+        run: |
+          createdb engager_test
+          ENGAGER_DEPLOYMENT_ENV=test ENGAGER_MIGRATE_DATABASE_URL="postgresql://$(id -un)@localhost/engager_test" npm run db:migrate
+          npm test

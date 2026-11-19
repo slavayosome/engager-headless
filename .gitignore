@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+.venv/
+.DS_Store
+__pycache__/
+*.pyc
+*.tsbuildinfo
+*.tgz
+packages/cli/dist/
+packages/cli/skills/

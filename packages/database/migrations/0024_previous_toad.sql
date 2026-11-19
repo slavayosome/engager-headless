@@ -1,0 +1,1 @@
+ALTER TABLE "campaigns" ADD COLUMN "web_facts" boolean DEFAULT false NOT NULL;

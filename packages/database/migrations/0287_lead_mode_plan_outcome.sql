@@ -1,0 +1,1 @@
+ALTER TABLE "listening_map_plans" ADD COLUMN "failed" boolean DEFAULT false NOT NULL;

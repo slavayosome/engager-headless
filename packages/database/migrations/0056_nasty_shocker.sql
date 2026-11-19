@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "subscription_activations_runner_event_unq" ON "subscription_activations" USING btree ("runner_work_event_id") WHERE "subscription_activations"."runner_work_event_id" is not null;

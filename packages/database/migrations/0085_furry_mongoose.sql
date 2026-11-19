@@ -1,0 +1,1 @@
+ALTER TABLE "agent_runners" ADD COLUMN "quota_state_observed_at" bigint;

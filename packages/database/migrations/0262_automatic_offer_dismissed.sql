@@ -1,0 +1,1 @@
+ALTER TABLE "campaigns" ADD COLUMN "automatic_offer_dismissed" jsonb;

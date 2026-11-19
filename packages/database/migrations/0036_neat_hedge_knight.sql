@@ -1,0 +1,1 @@
+ALTER TABLE "organizations" ADD COLUMN "own_post_replies" jsonb;

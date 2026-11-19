@@ -1,0 +1,1 @@
+ALTER TABLE "campaigns" ADD COLUMN "agent_interval_minutes" integer;

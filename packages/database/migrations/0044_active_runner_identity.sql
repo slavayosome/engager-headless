@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "api_keys_org_active_runner_uidx" ON "api_keys" USING btree ("organization_id","runner_id") WHERE "api_keys"."credential_profile" = 'runner' and "api_keys"."revoked_at" is null;

@@ -1,0 +1,1 @@
+ALTER TABLE "incoming_comments" ADD COLUMN "post_text" text;

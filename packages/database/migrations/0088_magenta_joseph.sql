@@ -1,0 +1,3 @@
+ALTER TABLE "onboarding_radar_previews" ADD COLUMN "preview_progress" jsonb DEFAULT '{"version":1,"sourceKeys":[],"nextSourceIndex":0,"attemptedSourceKeys":[],"cursors":{},"discoveryCalls":0,"discoveryFailedCalls":0,"attemptedCandidateIds":[],"evaluationFailedCount":0,"resumeAfter":null}'::jsonb NOT NULL;--> statement-breakpoint
+ALTER TABLE "products" ADD COLUMN "ingest_revision" bigint DEFAULT 0 NOT NULL;--> statement-breakpoint
+ALTER TABLE "products" ADD COLUMN "ingest_error_code" text;

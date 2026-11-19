@@ -1,0 +1,1 @@
+ALTER TABLE "system_state" ADD COLUMN "definition_projection_schema" integer DEFAULT 0 NOT NULL;

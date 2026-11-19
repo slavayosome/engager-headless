@@ -1,0 +1,2 @@
+ALTER TABLE "search_lookalikes" ADD COLUMN "target" text DEFAULT 'searches' NOT NULL;--> statement-breakpoint
+ALTER TABLE "search_lookalikes" ADD CONSTRAINT "search_lookalikes_target" CHECK ("search_lookalikes"."target" in ('searches', 'listening_map'));

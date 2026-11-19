@@ -1,0 +1,2 @@
+-- Installed NOT VALID and validated by migrate.ts after the parent
+-- subscriptions_org_id_unq index has been built concurrently.

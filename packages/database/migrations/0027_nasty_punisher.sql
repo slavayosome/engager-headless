@@ -1,0 +1,1 @@
+ALTER TABLE "campaigns" ADD COLUMN "web_facts_ratio" real DEFAULT 1 NOT NULL;

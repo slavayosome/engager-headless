@@ -1,0 +1,1 @@
+ALTER TABLE "campaigns" ADD COLUMN "warmup_start_rate" bigint;

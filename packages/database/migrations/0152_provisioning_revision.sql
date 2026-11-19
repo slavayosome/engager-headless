@@ -1,0 +1,1 @@
+ALTER TABLE "tenant_runtimes" ADD COLUMN "provisioning_revision" bigint DEFAULT 0 NOT NULL;

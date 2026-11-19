@@ -1,0 +1,1 @@
+ALTER TABLE "channels" DROP COLUMN "max_delay_sec";

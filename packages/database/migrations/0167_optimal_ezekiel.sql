@@ -1,0 +1,1 @@
+ALTER TABLE "cloud_resource_reservations" ADD COLUMN "counts_attempt" boolean DEFAULT false NOT NULL;

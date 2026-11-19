@@ -1,0 +1,42 @@
+{
+  "name": "engager",
+  "version": "0.7.10",
+  "description": "Local-first social engagement \u2014 one front door: agent, MCP server, setup. Runs entirely on your machine. LinkedIn is the first connector; more channels are coming.",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "bin": {
+    "engager": "./bin/engager.mjs"
+  },
+  "files": [
+    "bin/**/*.mjs",
+    "bin/dev-browser",
+    "bin/dev-agent-bin/security",
+    "dist",
+    "skills",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "prepack": "node build.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.110.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@sentry/node": "^10.65.0",
+    "drizzle-orm": "^0.45.2",
+    "gray-matter": "^4.0.3",
+    "node-cron": "^4.6.0",
+    "pg": "^8.22.0",
+    "posthog-node": "^4.16.0",
+    "resend": "4.8.0",
+    "stripe": "^17.5.0",
+    "zod": "^3.24.1",
+    "zod-to-json-schema": "^3.25.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

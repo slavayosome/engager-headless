@@ -1,0 +1,4 @@
+ALTER TABLE "email_delivery_receipts" ADD CONSTRAINT "email_delivery_receipts_kind_chk" CHECK ("email_delivery_receipts"."kind" in ('batch_refill', 'lead_hot', 'lead_nudge'));--> statement-breakpoint
+ALTER TABLE "email_delivery_receipts" ADD CONSTRAINT "email_delivery_receipts_state_chk" CHECK ("email_delivery_receipts"."state" in ('reserved', 'sending', 'sent', 'uncertain'));--> statement-breakpoint
+ALTER TABLE "email_delivery_receipts" ADD CONSTRAINT "email_delivery_receipts_attempts_chk" CHECK ("email_delivery_receipts"."attempts" >= 0);--> statement-breakpoint
+ALTER TABLE "email_delivery_receipts" ADD CONSTRAINT "email_delivery_receipts_provider_key_chk" CHECK (length("email_delivery_receipts"."provider_idempotency_key") between 1 and 256);

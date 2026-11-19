@@ -1,0 +1,2 @@
+ALTER TABLE "subscriptions" ADD COLUMN "guarded_cancellation_requested_by_user_id" uuid;--> statement-breakpoint
+ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_guarded_cancellation_requested_by_user_id_users_id_fk" FOREIGN KEY ("guarded_cancellation_requested_by_user_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;

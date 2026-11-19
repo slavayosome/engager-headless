@@ -1,0 +1,8 @@
+#!/bin/sh
+# Dev agent processes cannot read or mutate the owner's macOS Keychain.
+# Claude handles an absent item and a rejected write with its private file
+# credential store. Never forward arguments or stdin, which can contain tokens.
+case "$1" in
+  find-generic-password|delete-generic-password) exit 44 ;;
+  *) exit 1 ;;
+esac

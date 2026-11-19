@@ -1,0 +1,1 @@
+ALTER TABLE "journeys" ADD COLUMN "opened_from_lead_id" bigint;

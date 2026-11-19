@@ -1,0 +1,1 @@
+ALTER TABLE "subscriptions" ADD COLUMN "confirmed_refund_at" bigint;

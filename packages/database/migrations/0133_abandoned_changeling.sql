@@ -1,0 +1,3 @@
+ALTER TABLE "automation_runs" DROP CONSTRAINT "automation_runs_counts_check";--> statement-breakpoint
+ALTER TABLE "automation_runs" ADD COLUMN "demand_count" integer DEFAULT 0 NOT NULL;--> statement-breakpoint
+ALTER TABLE "automation_runs" ADD CONSTRAINT "automation_runs_counts_check" CHECK ("automation_runs"."demand_count" >= 0 and "automation_runs"."discovered_count" >= 0 and "automation_runs"."triaged_count" >= 0 and "automation_runs"."matched_count" >= 0 and "automation_runs"."drafted_count" >= 0 and "automation_runs"."published_count" >= 0 and "automation_runs"."rejected_count" >= 0 and "automation_runs"."cap_refused_count" >= 0);

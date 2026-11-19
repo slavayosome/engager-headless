@@ -1,0 +1,23 @@
+{
+  "name": "@engager/common",
+  "version": "0.0.0",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "exports": {
+    "./development": "./development.ts",
+    "./errors": "./errors.ts",
+    "./crypto": "./crypto.ts",
+    "./agent-support": "./agent-support.ts",
+    "./local-agent-support": "./local-agent-support.ts",
+    "./env-init": "./env-init.ts",
+    "./skill-installer": "./skill-installer.ts",
+    "./text-provenance": "./text-provenance.ts",
+    "./composer": "./composer.ts",
+    "./money": "./money.ts",
+    "./trial-reminder": "./trial-reminder.ts",
+    "./version": "./version.ts",
+    "./build-sha": "./build-sha.ts",
+    "./problem-report": "./problem-report.ts"
+  }
+}

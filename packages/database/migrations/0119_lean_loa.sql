@@ -1,0 +1,1 @@
+ALTER TABLE "messages" ADD COLUMN "automation_run_id" bigint;

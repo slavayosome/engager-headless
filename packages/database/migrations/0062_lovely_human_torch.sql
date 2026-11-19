@@ -1,0 +1,1 @@
+ALTER TABLE "onboarding_radar_previews" ADD COLUMN "target_revision" text;

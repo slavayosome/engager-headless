@@ -1,0 +1,2 @@
+ALTER TABLE "message_draft_revisions" DROP CONSTRAINT "message_draft_revisions_source_check";--> statement-breakpoint
+ALTER TABLE "message_draft_revisions" ADD CONSTRAINT "message_draft_revisions_source_check" CHECK ("message_draft_revisions"."source" in ('initial', 'redraft', 'human_edit', 'variant_swap'));
