@@ -1,7 +1,7 @@
 ---
 name: engager-campaigns
-version: 0.0.9
-description: The one way to create or change a Campaign. Ask the owner the few questions that decide it, read get_catalog, dry-run, show ONE proposal, save on a yes, set the Searches, test it, then stop at the owner's Start. Also the way to change a Strategy (one instruction, one patch, dry run first), edit Searches, and dig into a campaign's runs. Use for "new campaign", "quick campaign", "find me <audience>", "change this campaign", "at the reply step keep it shorter", "why did this run find no one".
+version: 0.0.10
+description: The one way to create or change a Campaign. Ask the owner the few questions that decide it, read get_catalog, dry-run, show ONE proposal, save on a yes, set the Searches, test it, then request Start when the owner asks. Also the way to change a Strategy (one instruction, one patch, dry run first), edit Searches, and dig into a campaign's runs. Use for "new campaign", "quick campaign", "find me <audience>", "change this campaign", "at the reply step keep it shorter", "why did this run find no one".
 ---
 
 # Engager Campaigns
@@ -42,10 +42,10 @@ Tool calls go through Engager's MCP connection; with a shell,
 
 ## The rules that do not bend
 
-- **Start is the owner's.** It is their press in Engager (Campaigns, the
-  campaign, Start campaign), and its card says exactly what will wake. You
-  never start a campaign, never `run_campaign` with `run: "now"` on one that
-  has not started, and never set `status` to anything but paused or archived.
+- **The owner confirms Start.** When asked, call `run_campaign` with
+  `run: "start"` and the campaign ID. The owner reviews what will wake in
+  a separate Mac dialog. Report Start only when the result says `started: true`.
+  The dashboard also offers Start campaign. Run now requires a started campaign.
 - **A widening waits for the owner.** When `save_campaign`, `patch_strategy` or
   `update_channel` answers `proposed`, say the change waits for their
   confirmation in Engager (Inbox, Your setup, or the campaign's Overview under
@@ -155,8 +155,7 @@ press: **engager-people** says how. Do not do it here.
 ### 5. Report and stop
 
 Say what exists, by name; that it is Paused and not started; what the test
-found. Then: "Start is yours. In Engager, Campaigns, `<name>`, Start campaign.
-Its card says what will wake." Stop there.
+found. Tell the owner they can ask you to request Start and confirm it on their Mac.
 
 ## Change a campaign
 
@@ -263,7 +262,7 @@ Working the people a campaign found: **engager-people**.
 
 ## Never
 
-- Start a campaign, or press Run now on one that has not started.
+- Answer a Start dialog for the owner, or press Run now on a campaign awaiting Start.
 - Set Automatic, a daily number, or live writes on your own judgment.
 - Report a `proposed` change as made, or a test as the campaign running.
 - Create a campaign any other way, or a second campaign beside one the owner

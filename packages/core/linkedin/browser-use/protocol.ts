@@ -167,6 +167,7 @@ const EnsureSessionRequestSchema = z
     params: z
       .object({
         interactive: z.boolean().optional(),
+        existingPageOnly: z.literal(true).optional(),
         surface: z.boolean().optional(),
         signIn: z.boolean().optional(),
         place: WindowPlaceSchema.optional(),

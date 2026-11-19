@@ -167,7 +167,11 @@ async function enqueue(
         throw error;
       }
     }
-    const left = await afterWake(bridge, request, deadline - Date.now());
+    const observe = request.op === "ensure_session" && request.params.existingPageOnly;
+    if (observe && !bridge.browserReady) {
+      return { v: BROWSER_USE_PROTOCOL_VERSION, id: request.id, op: "ensure_session", ok: true, result: { ok: false, reason: "browser_closed" } };
+    }
+    const left = observe ? null : await afterWake(bridge, request, deadline - Date.now());
     if (left === 0) {
       return protocolError(request, "MACHINE_WAKING", WAKING_REASON, true);
     }

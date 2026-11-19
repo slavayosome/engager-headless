@@ -138,6 +138,7 @@ export class BrowserUseDriver implements LinkedInDriver {
 
   async ensureSession(opts?: EnsureSessionOptions): Promise<SessionStatus> {
     const result = await this.#client.request("ensure_session", {
+      ...(opts?.existingPageOnly ? { existingPageOnly: true } : {}),
       ...(opts?.interactive ? { interactive: true } : {}),
       ...(opts?.interactive && opts.surface === false ? { surface: false } : {}),
       ...(opts?.signIn ? { signIn: true } : {}),

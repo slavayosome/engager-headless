@@ -14,7 +14,6 @@ import { runSteps } from "../../packages/core/test/leadSteps";
 
 afterAll(() => pool.end());
 
-/** A model that screens by what the words say. */
 function screening(): FakeLLM {
   const llm = new FakeLLM();
   llm.leadScreen = (user) =>
@@ -37,7 +36,9 @@ function screening(): FakeLLM {
 describe("a Find leads run, end to end", { timeout: 120_000 }, () => {
   it("reads and hands off, then the steps screen, read, judge and serve, and the rows say what each did", async () => {
     const organizationId = await mkOrg();
-    const { campaignId, scoutId } = await leadCampaign(organizationId, { start: true });
+    const { campaignId, scoutId } = await leadCampaign(organizationId);
+    const owner = { ...buildMcpCtx(organizationId), confirmStart: async () => true };
+    expect(parse(await v2call(owner, "run_campaign", { campaignId, run: "start" }))).toMatchObject({ started: true });
     await addPhrase(organizationId, campaignId, { term: "eating my week" });
     await addPhrase(organizationId, campaignId, { term: "tool for board reporting", languageType: "direct_ask" });
     const ravi = postOf({ authorProfileId: "ravi", metrics: { comments: 3 } });

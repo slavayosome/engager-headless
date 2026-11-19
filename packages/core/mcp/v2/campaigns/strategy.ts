@@ -17,6 +17,7 @@ import { rankOf } from "../../../strategy/catalog";
 import { mcpOperationActor, type McpCtx } from "../../context";
 import { errorResult, jsonResult } from "../../tools/util";
 import { defineTool, type V2Tool } from "../define";
+import { requestCampaignStart } from "./start";
 
 const id = z.number().int().positive();
 type SearchEdit = { campaignId: number; ops?: Array<{ op: string; id?: number; text?: string; profileId?: string; lookalikeId?: number; index?: number; languageType?: (typeof LANGUAGE_TYPES)[number] }>; fromPostUrl?: string };
@@ -100,11 +101,12 @@ export const strategyTools: readonly V2Tool[] = [
       return jsonResult({ campaigns });
     },
   }),
-  defineTool({ name: "run_campaign", kind: "linkedin", description: "Run a campaign or its pre-start test within its strategy and stops. due_work is account-wide, no pacing relief. See engager-campaigns.",
-    input: z.object({ campaignId: id, run: z.enum(["now", "first_look", "due_work", "test"]), worker: z.enum(["scout", "ambassador"]).optional() }),
+  defineTool({ name: "run_campaign", kind: "linkedin", description: "Request the owner's Mac confirmation to start a draft, run a pre-start test, or run due work within the strategy and stops. due_work is account-wide, no pacing relief. See engager-campaigns.",
+    input: z.object({ campaignId: id, run: z.enum(["now", "first_look", "due_work", "test", "start"]), worker: z.enum(["scout", "ambassador"]).optional() }),
     handler: async ({ ctx, signal }, input) => {
       if (input.run === "now") return jsonResult(await runWorkerNow(ctx, input.campaignId, input.worker, signal));
       if (input.worker) throw new AppError("invalid_run", "A worker can only be selected for Run now.", 400);
+      if (input.run === "start") return jsonResult(await requestCampaignStart(ctx, input.campaignId, signal));
       if (input.run === "test") return withOrg(ctx.organizationId, async tx => jsonResult(await runCampaignTestOp(tx, input.campaignId)));
       if (input.run === "first_look") return withOrg(ctx.organizationId, async tx => {
         const previous = await campaignFirstLook(tx, ctx.organizationId, input.campaignId);

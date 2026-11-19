@@ -1,6 +1,6 @@
 {
   "name": "engager",
-  "version": "0.7.10",
+  "version": "0.7.11",
   "description": "Local-first social engagement \u2014 one front door: agent, MCP server, setup. Runs entirely on your machine. LinkedIn is the first connector; more channels are coming.",
   "license": "AGPL-3.0-or-later",
   "type": "module",

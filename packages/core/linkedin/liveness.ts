@@ -366,7 +366,7 @@ export async function recordRunSession(
         .where(eq(channels.network, DEFAULT_NETWORK)),
     );
     if (!row || (!turnedAway && !row.reason)) return;
-    const session = await driver.ensureSession({ interactive: false });
+    const session = await driver.ensureSession({ existingPageOnly: true });
     if (session.ok) {
       if (row.accountId) await recordSendSession(organizationId, row.accountId, session);
     } else if (session.signInPage) {

@@ -412,8 +412,8 @@ class Chromium:
 		"""Every tab the browser has, in every browser context it holds."""
 		return [Page(self, info["targetId"]) for info in await self._page_targets()]
 
-	async def new_page(self) -> Page:
-		result = await self._client.send.Target.createTarget(params={"url": "about:blank"})
+	async def new_page(self, *, background: bool = False) -> Page:
+		result = await self._client.send.Target.createTarget(params={"url": "about:blank", "background": background})
 		return Page(self, result["targetId"])
 
 	async def close_page(self, page: Page) -> None:

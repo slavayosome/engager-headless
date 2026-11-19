@@ -47,6 +47,8 @@ export type WindowPlace = { left: number; top: number; width: number; height: nu
 
 /** How a probe reaches the owner's window (`ensureSession`). */
 export type EnsureSessionOptions = {
+  /** A worker finished. Read its existing page without opening or moving a window. */
+  existingPageOnly?: boolean;
   /** The owner is at the window (Test connection, the sign-in step): a driver
    *  holding a hidden headed browser surfaces it, and reads again who is
    *  signed in rather than answering from what it learned earlier. */

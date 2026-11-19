@@ -98,7 +98,7 @@ export const campaignCrudTools: readonly V2Tool[] = [
       } catch (error) {
         if (error instanceof Preview) {
           const value = error.value as { valid: boolean };
-          return jsonResult(value.valid ? { dryRun: true, errors: [], confirmationRequired: ["Start remains the owner's in Engager"], ...value } : { dryRun: true, ...value });
+          return jsonResult(value.valid ? { dryRun: true, errors: [], confirmationRequired: ["The owner confirms Start in Engager or through a local Start request"], ...value } : { dryRun: true, ...value });
         }
         if (error instanceof AppError) return jsonResult({ dryRun: true, valid: false, errors: [{ field: "field" in error && typeof error.field === "string" ? error.field : null, code: error.code, message: error.message }] });
         if (error instanceof z.ZodError) return jsonResult({ dryRun: true, valid: false, errors: error.issues.map(issue => ({ field: issue.path.join("."), code: issue.code, message: issue.message })) });

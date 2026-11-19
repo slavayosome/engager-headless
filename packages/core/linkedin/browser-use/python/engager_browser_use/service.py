@@ -1522,7 +1522,7 @@ class SidecarService:
 		# owner's own window ops (they decide the window themselves, a restart
 		# among them), and shutdown touches no window.
 		if op not in {"warm_browser", "shutdown", "set_window_visibility", "restart_browser", "close_browser"} and not (
-			op == "ensure_session" and params.get("interactive") is True
+			op == "ensure_session" and (params.get("interactive") is True or params.get("existingPageOnly") is True)
 		):
 			# The owner is typing a sign-in on the page this op would navigate.
 			# It would find nobody signed in, and is told so without taking the
@@ -1535,6 +1535,10 @@ class SidecarService:
 				fail("INVALID_REQUEST", "warm_browser takes no params")
 			return await self.backend.warm_browser()
 		if op == "ensure_session":
+			if params.get("existingPageOnly") is True:
+				if len(params) != 1:
+					fail("INVALID_REQUEST", "existingPageOnly takes no window options")
+				return await self.backend.observe_session()
 			interactive = params.get("interactive", False)
 			if not isinstance(interactive, bool):
 				fail("INVALID_REQUEST", "interactive must be a boolean")

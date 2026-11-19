@@ -2,7 +2,7 @@
 
 Run Engager on your own machine and use it from the command line or through your AI agent over MCP. The headless runtime stores its data in local PostgreSQL. It uses your own agent for model calls. Installing it and reading local status require no Engager account, card, or subscription.
 
-The official Mac app includes the dashboard for $29/month. Some actions, including the owner's confirmation to start a campaign, are available in that dashboard. [Engager for Mac](https://getengager.com)
+You can start a draft campaign for free. Ask your local agent to start it, review the campaign and its actions in the Mac dialog, then choose **Start campaign**. The official Mac app includes the dashboard for $29/month. [Engager for Mac](https://getengager.com)
 
 ## Install on an Apple Silicon Mac
 
@@ -42,6 +42,12 @@ npm run up
 ```
 
 Leave this command running to serve the scheduler and worker. Ctrl-C stops them. The one-shot status and skills commands also work while the background process is stopped. Open a new session of your configured agent to use the installed MCP tools and skills. Model calls require your own authenticated agent. LinkedIn operations require your own connected account. Automated activity can lead to account restrictions.
+
+To request the same confirmation from a terminal, substitute your draft's campaign ID and run this in your logged-in Mac session.
+
+```sh
+npm run --silent engager -- call run_campaign '{"campaignId":1,"run":"start"}'
+```
 
 Engager sends anonymous product telemetry to its relay. To inspect what is collected, see the [event definitions](packages/observability/events.ts).
 

@@ -7,35 +7,38 @@ import unittest
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from engager_browser_use.backend import BrowserUseBackend, SidecarError
+from engager_browser_use.chromium import Chromium
 from engager_browser_use.journal import DurableJournal
 from engager_browser_use.service import SidecarService
 from engager_browser_use.voyager import VoyagerUnavailable
 
 
 class CriticalChromiumTests(unittest.IsolatedAsyncioTestCase):
+	async def test_post_run_observation_leaves_closed_browser_and_tabs_closed(self):
+		backend = BrowserUseBackend.__new__(BrowserUseBackend)
+		backend._browser = backend._page = None
+		self.assertEqual((await backend.observe_session())["reason"], "browser_closed")
+		backend._browser, backend._page = object(), AsyncMock()
+		backend._page.get_url.side_effect = RuntimeError("closed tab")
+		self.assertEqual((await backend.observe_session())["reason"], "browser_closed")
+
+	async def test_temporary_identity_tab_preserves_the_selected_tab_and_closes_on_failure(self):
+		backend = BrowserUseBackend.__new__(BrowserUseBackend)
+		backend._browser, backend._assert_ready, backend._block_media_on = AsyncMock(), AsyncMock(), AsyncMock()
+		backend._voyager_get = AsyncMock(side_effect=VoyagerUnavailable("no identity"))
+		backend._own_from_profile_data = AsyncMock(side_effect=RuntimeError("tab closed"))
+		with self.assertRaisesRegex(RuntimeError, "tab closed"):
+			await backend.connected_account_id(preserve_page=True)
+		backend._browser.new_page.assert_awaited_once_with(background=True)
+		backend._browser.close_page.assert_awaited_once_with(backend._browser.new_page.return_value)
+
 	async def test_guard_rechecks_url_and_sessions_are_shared(self):
-		from engager_browser_use.chromium import Chromium
-
-		class Events:
-			def __getattr__(self, _name):
-				return lambda _handler: None
-
-		class Target:
-			def __init__(self):
-				self.attachToTarget = AsyncMock(side_effect=self.attach)
-				self.getTargetInfo = AsyncMock(return_value={"targetInfo": {"url": "https://www.linkedin.com/feed/"}})
-
-			async def attach(self, **_kwargs):
-				await asyncio.sleep(0)
-				return {"sessionId": "one"}
-
-		class Client:
-			def __init__(self):
-				self.register = type("Register", (), {"Page": Events(), "Target": Events()})()
-				self.send = type("Send", (), {"Target": Target(), "Page": type("Page", (), {
-					"enable": AsyncMock(), "navigate": AsyncMock()})()})()
-
-		client = Client()
+		async def attach(**_kwargs):
+			await asyncio.sleep(0)
+			return {"sessionId": "one"}
+		client = MagicMock()
+		client.send.Target, client.send.Page = AsyncMock(), AsyncMock()
+		client.send.Target.attachToTarget.side_effect = attach
 		browser = Chromium(client, guard=True)
 		a, b = await asyncio.gather(browser.session_for("tab"), browser.session_for("tab"))
 		self.assertEqual(a.session_id, b.session_id)
@@ -47,10 +50,7 @@ class CriticalChromiumTests(unittest.IsolatedAsyncioTestCase):
 			self.assertEqual(client.send.Page.navigate.await_count, sent, url)
 
 	async def test_launch_failure_stops_process(self):
-		from engager_browser_use.chromium import Chromium
-
-		process = type("Process", (), {"returncode": None, "terminate": lambda self: None,
-			"wait": AsyncMock(), "pid": 42})()
+		process = MagicMock(returncode=None, wait=AsyncMock(), pid=42)
 		probe = MagicMock()
 		probe.__enter__.return_value.getsockname.return_value = ("127.0.0.1", 1234)
 		with patch("socket.socket", return_value=probe), \
@@ -65,8 +65,8 @@ class CriticalChromiumTests(unittest.IsolatedAsyncioTestCase):
 
 
 class Backend:
-	def __init__(self):
-		self.presses, self.journal, self.state_at_press, self.signing_in = 0, None, None, MagicMock(return_value=False)
+	def __init__(self, journal):
+		self.presses, self.journal, self.state_at_press, self.signing_in = 0, journal, None, MagicMock(return_value=False)
 		self.rehide_if_needed = self.validate_prepared_comment = self.shutdown = AsyncMock()
 		self.reconcile_posted = AsyncMock(return_value=None)
 		self.connected_account_id = AsyncMock(return_value="https://www.linkedin.com/in/spike-user")
@@ -84,10 +84,7 @@ class CriticalJournalTests(unittest.IsolatedAsyncioTestCase):
 	async def asyncSetUp(self):
 		self.tmp = tempfile.TemporaryDirectory()
 		self.now = int(time.time() * 1000)
-		self.journal = DurableJournal(Path(self.tmp.name) / "journal.json")
-		self.backend = Backend()
-		self.backend.journal = self.journal
-		self.service = SidecarService(self.backend, self.journal, clock_ms=lambda: self.now)
+		self.open_service()
 		self.value = {"kind": "comment", "organizationId": "00000000-0000-4000-8000-000000000001",
 			"channelId": 3, "expectedAccountProfileId": "spike-user", "postUrn": "urn:li:activity:1",
 			"text": "A careful comment", "marker": "op-1"}
@@ -103,33 +100,27 @@ class CriticalJournalTests(unittest.IsolatedAsyncioTestCase):
 		return await self.call("write", operationId="op-1", input=value or self.value)
 
 	async def test_a_write_is_journaled_clicking_before_its_one_press_and_no_later_ask_presses_again(self):
-		persists = []
-		persist = self.journal._persist
-		self.journal._persist = lambda: (persists.append(1), persist())[1]
+		self.journal._persist = MagicMock(wraps=self.journal._persist)
 		self.assertEqual((await self.write())["result"]["state"], "committed")
-		self.assertEqual((self.backend.state_at_press, len(persists)), ("CLICKING", 2))
+		self.assertEqual((self.backend.state_at_press, self.journal._persist.call_count, self.backend.presses), ("CLICKING", 2, 1))
 		self.assertEqual((await self.write())["result"]["state"], "already_committed")
 		self.assertEqual((await self.write({**self.value, "text": "different"}))["error"]["code"], "OPERATION_CONFLICT")
+		await self.reopen()
+		self.assertEqual((await self.write())["result"]["state"], "already_committed")
 		for state in ("CLICKING", "UNCERTAIN"):
 			self.journal.mutate("op-1", lambda entry: {**entry, "state": state})
+			await self.reopen()
 			self.assertEqual((await self.write())["error"]["code"], "WRITE_OUTCOME_UNCERTAIN")
-		self.assertEqual(self.backend.presses, 1)
+			self.assertEqual(self.backend.presses, 0)
 
 	async def reopen(self):
 		await self.service.close()
-		self.journal = DurableJournal(Path(self.tmp.name) / "journal.json")
-		self.backend = Backend()
-		self.backend.journal = self.journal
-		self.service = SidecarService(self.backend, self.journal, clock_ms=lambda: self.now)
+		self.open_service()
 
-	async def test_confirmed_and_clicking_survive_a_restart_and_refuse_another_press(self):
-		self.assertEqual((await self.write())["result"]["state"], "committed")
-		await self.reopen()
-		self.assertEqual((await self.write())["result"]["state"], "already_committed")
-		self.journal.mutate("op-1", lambda entry: {**entry, "state": "CLICKING"})
-		await self.reopen()
-		self.assertEqual((await self.write())["error"]["code"], "WRITE_OUTCOME_UNCERTAIN")
-		self.assertEqual(self.backend.presses, 0)
+	def open_service(self):
+		self.journal = DurableJournal(Path(self.tmp.name) / "journal.json")
+		self.backend = Backend(self.journal)
+		self.service = SidecarService(self.backend, self.journal, clock_ms=lambda: self.now)
 
 	async def test_restart_prunes_only_old_terminal_entries(self):
 		old = int(time.time() * 1000) - 31 * 24 * 60 * 60 * 1000

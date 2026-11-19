@@ -906,6 +906,8 @@ class BrowserBackend(Protocol):
 
 	async def rehide_if_needed(self) -> None: ...
 
+	async def observe_session(self) -> dict[str, Any]: ...
+
 	def signing_in(self) -> bool: ...
 
 	async def set_window_visibility(
@@ -1771,6 +1773,24 @@ class BrowserUseBackend:
 		await self._start()
 		return {"ok": True}
 
+	async def observe_session(self) -> dict[str, Any]:
+		"""Report what the worker's page shows. A closed or unrelated tab gives no evidence."""
+		if self._browser is None:
+			return {"ok": False, "reason": "browser_closed"}
+		url = await self._page_url(self._page)
+		if not url or not url.startswith(LINKEDIN_ORIGINS):
+			return {"ok": False, "reason": "browser_closed"}
+		snapshot = await self._session_snapshot()
+		reason = self._wall_reason(snapshot)
+		if reason:
+			result = {"ok": False, "reason": reason}
+			if reason == "login_required" and snapshot.get("login") and str(snapshot.get("url", "")).startswith(LINKEDIN_ORIGINS):
+				result["signInPage"] = True
+			return result
+		# Only clear a previous failure for the account actually present now.
+		identifier = own_public_identifier(await self._voyager_get("/voyager/api/me", route_prefix=LINKEDIN_ORIGIN))
+		return {"ok": True, "account": {"externalAccountId": identifier}} if identifier else {"ok": False, "reason": "identity_unavailable"}
+
 	async def ensure_session(
 		self,
 		interactive: bool = False,
@@ -1991,7 +2011,7 @@ class BrowserUseBackend:
 		assert self._browser is not None
 		# Blank first: `new_page(url)` starts the navigation before anything can
 		# be blocked on it, and a profile page is mostly pictures.
-		probe = await self._browser.new_page()
+		probe = await self._browser.new_page(background=True)
 		try:
 			await self._block_media_on(probe)
 			await self._own_from_profile_data(probe, lambda: self._load_own_profile(probe))

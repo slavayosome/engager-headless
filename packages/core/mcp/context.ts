@@ -19,6 +19,7 @@ import {
  * ANTHROPIC_API_KEY.
  */
 export type McpCtx = {
+  confirmStart?: (message: string, signal: AbortSignal) => Promise<boolean>;
   organizationId: string;
   /** Hosted HTTP request attribution. Local stdio may omit it. */
   requestId?: string;
