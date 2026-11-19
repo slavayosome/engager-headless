@@ -18,7 +18,7 @@ await assertNonSuperuserRole(); // refuse to run as a superuser (bypasses RLS)
 // The agent's half of problem reports (`scripts/agent.ts` says why): this worker
 // claims `file_bug_report` too, and would otherwise hand every one back.
 const { registerReportSources } = await import("@engager/core/reports/sources");
-const { reportAccountEmail, reportRelayTarget } = await import("@engager/billing/reportSources");
+const { reportAccountEmail, reportRelayTarget } = await import("@engager/core/entitlements/reportSources");
 registerReportSources({ accountEmail: reportAccountEmail, relayTarget: reportRelayTarget });
 const { runLoop } = await import("@engager/core/jobs/worker");
 await runLoop({});

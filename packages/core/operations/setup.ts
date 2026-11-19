@@ -12,7 +12,7 @@ import {
 } from "@engager/database/schema";
 import { afterCommit, type Tx } from "@engager/database/tenant";
 import { track } from "@engager/observability/analytics";
-import { checkoutConfigured, getOrgPlan } from "@engager/billing/plans";
+import { checkoutConfigured, accountPlanKey } from "../entitlements/plans";
 import { AppError } from "@engager/common/errors";
 import {
   agentCliStatusAsync,
@@ -183,7 +183,7 @@ export async function getSetupState(
     productLinks.map((link) => link.campaignId),
   );
 
-  const plan = await getOrgPlan(tx, organizationId);
+  const plan = await accountPlanKey(tx, organizationId);
   const system = await getSystemState(tx);
   // The stored overrides ride along so the probe reports the map and binary
   // inference will actually use, not the env's answer to a question the owner
@@ -239,7 +239,7 @@ export async function getSetupState(
           productBackedCampaignIds.has(campaign.id),
       ).length,
     },
-    subscription: { plan: plan.key, checkoutConfigured: checkoutConfigured() },
+    subscription: { plan, checkoutConfigured: checkoutConfigured() },
     safety: {
       killSwitch: system?.killSwitch ?? false,
       dailyEngageCap: channel?.dailyEngageCap ?? 40,

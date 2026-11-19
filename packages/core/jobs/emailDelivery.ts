@@ -5,7 +5,7 @@ import {
   EmailProviderError,
   type PreparedEmailPayload,
   type SendResult,
-} from "@engager/email";
+} from "../leads/notifications/delivery";
 import { resolveDeploymentEnvironment } from "@engager/database/environment";
 import {
   emailDeliveryReceipts,

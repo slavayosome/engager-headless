@@ -1,6 +1,6 @@
-import { serviceAdmission, type ServiceDecision } from "@engager/billing/capabilities";
-import type { EntitlementDecision } from "@engager/billing/entitlementCache";
-import type { CommercialProjection } from "@engager/billing/projection";
+import { serviceAdmission, type ServiceDecision } from "../entitlements/capabilities";
+import type { EntitlementDecision } from "../entitlements/entitlementCache";
+import type { CommercialProjection } from "../entitlements/projection";
 import type { Tx } from "@engager/database/tenant";
 import { claimSupervision, type SupervisionClaim, type Supervisor } from "./record";
 
@@ -81,7 +81,7 @@ export function supervisionAdmission(input: {
     input.capability?.allowed === true &&
     input.capability.capability === "desktop_managed";
   // A MAC INSTALL'S OWN DATABASE HOLDS NO SUBSCRIPTION ROWS. Provider events
-  // land on the cloud (`packages/billing/webhooks.ts` is the only writer), so on
+  // land on the cloud (`the cloud billing service` is the only writer), so on
   // a laptop `no_account` is the absence of evidence, not evidence of absence —
   // and requiring the local projection there refuses every maintained Mac there
   // is. The signed claim is what the account says in that case: the control

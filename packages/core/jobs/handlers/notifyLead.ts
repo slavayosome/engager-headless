@@ -11,10 +11,10 @@ import {
 } from "@engager/database/schema";
 import { withOrg, type Tx } from "@engager/database/tenant";
 import {
-  leadHotEmail,
   prepareEmailPayload,
   sendPreparedEmail,
-} from "@engager/email";
+} from "../../leads/notifications/delivery";
+import { leadHotEmail } from "../../leads/notifications/templates";
 import { getLLM, type LLM } from "../../ai/client";
 import { config } from "../../config";
 import { leadsEnabled } from "../../leads/gate";

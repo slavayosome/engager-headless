@@ -1048,7 +1048,7 @@ export const subscriptions = pgTable(
      * one unit of one catalogued Engager offer. Null on every historical row —
      * a Pro subscription, a comp trial, a legacy price alias — which is exactly
      * why those rows stay readable and grant nothing (TIER-11). The catalogue
-     * lives in `packages/billing/offer.ts`; this column is its frozen echo, so
+     * lives in `packages/core/entitlements/offer.ts`; this column is its frozen echo, so
      * a later price rotation cannot re-interpret an existing generation. */
     offerId: text("offer_id", {
       enum: ["mac_monthly_v1", "cloud_monthly_v1"],

@@ -1,4 +1,4 @@
-import { backgroundEntitlement, runtimeEntitlement } from "@engager/billing/entitlement";
+import { backgroundEntitlement, runtimeEntitlement } from "../entitlements/entitlement";
 import type { Tx } from "@engager/database/tenant";
 import { campaigns, channels, type ActionKind } from "@engager/database/schema";
 import { eq } from "drizzle-orm";

@@ -7,6 +7,7 @@ import {
   inArray,
   lt,
   lte,
+  ne,
   notInArray,
   or,
   sql,
@@ -230,7 +231,11 @@ export async function claimNextJob(
     // retry: count it and record why, and dead-letter once maxAttempts is reached.
     // Long-running healthy jobs on the continuous worker HEARTBEAT their lockedAt
     // (see extendLease), so they never look stale here.
+    // A shared or restored database may contain payment-service jobs. Only
+    // their owning service may claim them or expire their leases.
+    const localJob = ne(jobs.type, "reconcile_trial_renewal");
     const staleConditions = [
+      localJob,
       eq(jobs.status, "running"),
       lt(jobs.lockedAt, now - leaseMs),
     ];
@@ -264,7 +269,7 @@ export async function claimNextJob(
         .where(and(eq(jobs.id, job.id), staleWhere));
     }
 
-    const conds = [eq(jobs.status, "queued"), lte(jobs.nextRunAt, now)];
+    const conds = [localJob, eq(jobs.status, "queued"), lte(jobs.nextRunAt, now)];
     if (onlyOrgs) conds.push(inArray(jobs.organizationId, onlyOrgs));
     if (excludeTypes && excludeTypes.length > 0) {
       // Skip excluded types UNLESS they've been waiting long enough to be orphans.

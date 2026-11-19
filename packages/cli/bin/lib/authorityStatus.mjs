@@ -4,10 +4,10 @@
 // shells out to `claude mcp list` and a live MCP round-trip.
 //
 // DISPLAY ONLY: this reads the flat `authority.json` cache
-// (packages/billing/authority.ts's `CachedAuthority`) by hand rather than
+// (the managed authority client's `CachedAuthority`) by hand rather than
 // importing `readAuthorityState`. `engager.mjs` is dependency-free plain
 // JS -- it is not in build.mjs's ENTRIES, so nothing bundles it and it
-// cannot import from packages/billing. Duplicating the shape here is a
+// cannot import the managed authority client. Duplicating the shape here is a
 // second reader of a row that module owns alone, but the alternative is no
 // reader at all in the packaged bin.
 //
@@ -43,7 +43,7 @@ function isFiniteEpochMs(value) {
  * touching the database or the network. Never throws -- a doctor that
  * crashes on a corrupt file is worse than one that says "unreadable" -- and
  * tolerates a missing file, bad JSON, or a shape mismatch the same way
- * `readCachedAuthority` (packages/billing/authority.ts) does, since it reads
+ * `readCachedAuthority` (the managed authority client) does, since it reads
  * the same `CachedAuthority` shape.
  *
  * `now` and `filePath` are parameters for the same reason
@@ -54,7 +54,7 @@ function isFiniteEpochMs(value) {
 export function authorityStatusLine(
   now,
   // Matches HOME_DIR in engager.mjs and authorityFilePath() in
-  // packages/billing/authority.ts -- three places this location is spelled.
+  // the managed authority client -- three places this location is spelled.
   filePath = path.join(os.homedir(), ".engager", "authority.json"),
 ) {
   let raw;
@@ -91,7 +91,7 @@ export function authorityStatusLine(
     return "→ another install holds this account's authority";
   }
   // `heldUntil: 0` is not a lease that ran out -- it is the row
-  // `readOrMintHolderId` (packages/billing/authority.ts) writes before the
+  // `readOrMintHolderId` (the managed authority client) writes before the
   // FIRST claim ever succeeds, the same row `readAuthorityState` there
   // already answers "missing" for rather than "elsewhere". Falling through
   // to the lapsed line below would tell an install that has never claimed

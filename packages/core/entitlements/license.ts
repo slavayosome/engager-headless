@@ -10,7 +10,7 @@
 // licenseRequired() (the build-time-baked gate constant) returns false. On a
 // gated machine ENGAGER_DEPLOYMENT_ENV lives in user-writable
 // ~/.engager/.env, so the gate predicate must never read it — see INV-18 and
-// packages/billing/licenseMode.ts.
+// packages/core/entitlements/licenseMode.ts.
 import * as crypto from "node:crypto";
 import type { KeyObject } from "node:crypto";
 import {

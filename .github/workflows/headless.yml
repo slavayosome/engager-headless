@@ -32,6 +32,9 @@ jobs:
           test "$before" = "$(shasum -a 256 .env)"
           test ! -d apps/dashboard
           test ! -d packages/cli/dist/dashboard
+          test ! -e packages/billing
+          test ! -e packages/email
+          node -e 'const p = require("./package-lock.json").packages; if (Object.keys(p).some(k => /node_modules\/(stripe|resend)$/.test(k))) process.exit(1)'
       - name: Run headless regression tests
         run: |
           createdb engager_test

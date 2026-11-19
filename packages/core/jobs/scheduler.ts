@@ -1,6 +1,6 @@
 import cron from "node-cron";
 import { eq } from "drizzle-orm";
-import { backgroundEntitlement } from "@engager/billing/entitlement";
+import { backgroundEntitlement } from "../entitlements/entitlement";
 import { db as baseDb } from "@engager/database";
 import { campaigns, organizations } from "@engager/database/schema";
 import { withOrg, type Tx } from "@engager/database/tenant";

@@ -36,11 +36,51 @@ import { section14AccountDefault, withActionModes } from "../../packages/core/st
 import { modeFor } from "../../packages/core/strategy/mode";
 import { setKillSwitch } from "../../packages/core/ratelimit/killswitch";
 import { withTempDir } from "../../packages/core/test/tempDir";
+import { claimNextJob } from "../../packages/core/jobs/queue";
+import { prepareEmailPayload, sendPreparedEmail } from "../../packages/core/leads/notifications/delivery";
 import { getCampaign, getChannel, inOrg, mkOrg } from "../../packages/core/test/db";
 import { buildMcpCtx } from "../../packages/core/mcp/context";
 import { injectedConnector, parse, v2call } from "../../packages/core/test/mcpHarness";
 
 afterAll(() => pool.end());
+
+it("leaves commercial jobs queued or leased when a headless worker claims local work", async () => {
+  const org = await mkOrg();
+  const now = Date.now();
+  const billingJob = { organizationId: org, type: "reconcile_trial_renewal" as const, nextRunAt: 1 };
+  await withOrg(org, tx => tx.insert(jobs).values([
+    billingJob,
+    { ...billingJob, status: "running", lockedAt: 1, leaseToken: "managed-worker" },
+    { organizationId: org, type: "check_stale_leads", nextRunAt: now },
+  ]));
+  expect((await claimNextJob(undefined, now, 1000, [org]))?.type).toBe("check_stale_leads");
+  const rows = await withOrg(org, tx => tx.select().from(jobs)
+    .where(and(eq(jobs.organizationId, org), eq(jobs.type, "reconcile_trial_renewal"))).orderBy(jobs.id));
+  expect(rows).toMatchObject([{ status: "queued", attempts: 0 }, { status: "running", attempts: 0, leaseToken: "managed-worker" }]);
+});
+
+it("sends an owner alert with the frozen sender, receipt key and cancellation signal", async () => {
+  vi.stubEnv("RESEND_API_KEY", "fixture");
+  vi.stubEnv("RESEND_BASE_URL", "https://mail.example.test");
+  vi.stubEnv("ENGAGER_EMAIL_FROM", "old@example.test");
+  const request = vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json({ id: "receipt-1" }));
+  try {
+    const payload = prepareEmailPayload({ to: "owner@example.test", subject: "Hot lead", html: "<p>Hello</p>" });
+    vi.stubEnv("ENGAGER_EMAIL_FROM", "new@example.test");
+    const options = { idempotencyKey: "lead-1", signal: new AbortController().signal };
+    await expect(sendPreparedEmail(payload, options)).resolves.toEqual({ id: "receipt-1" });
+    const [url, init] = request.mock.calls[0]!;
+    expect(url).toBe("https://mail.example.test/emails");
+    expect(new Headers(init?.headers).get("Idempotency-Key")).toBe("lead-1");
+    expect(init?.signal).toBe(options.signal);
+    expect(JSON.parse(String(init?.body))).toMatchObject({ from: "old@example.test", to: "owner@example.test" });
+    request.mockResolvedValue(Response.json({ message: "private recipient detail" }, { status: 429 }));
+    await expect(sendPreparedEmail(payload, options)).rejects.toMatchObject({ name: "EmailProviderError", status: 429 });
+  } finally {
+    request.mockRestore();
+    vi.unstubAllEnvs();
+  }
+});
 
 it("authorizes before reconciliation and refuses a disabled driver without a request", async () => {
   const driver = new MockDriver();

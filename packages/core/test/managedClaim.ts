@@ -1,8 +1,8 @@
 import type { KeyObject } from "node:crypto";
 import { writeFileSync } from "node:fs";
 import path from "node:path";
-import { deviceIdForKey, signClaimsV2 } from "@engager/billing/claims";
-import { writeCachedEntitlement } from "@engager/billing/entitlementCache";
+import { deviceIdForKey, signClaimsV2 } from "../entitlements/claims";
+import { writeCachedEntitlement } from "../entitlements/entitlementCache";
 
 export const CLAIM_ISSUER = "https://cloud.engager.test";
 

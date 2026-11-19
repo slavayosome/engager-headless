@@ -12,7 +12,7 @@ import {
   type Channel,
 } from "@engager/database/schema";
 import type { Tx } from "@engager/database/tenant";
-import { backgroundEntitlement, runtimeEntitlement } from "@engager/billing/entitlement";
+import { backgroundEntitlement, runtimeEntitlement } from "../entitlements/entitlement";
 import { scopedStop } from "../actions/stops";
 import { readExecutionAuthority } from "../execution/authority";
 import { envInt } from "../config";

@@ -18,7 +18,7 @@ import {
   type Channel,
 } from "@engager/database/schema";
 import { withOrg, type Tx } from "@engager/database/tenant";
-import { backgroundEntitlement, LICENSE_HOLD_RECHECK_MS } from "@engager/billing/entitlement";
+import { backgroundEntitlement, LICENSE_HOLD_RECHECK_MS } from "../../entitlements/entitlement";
 import { getLLM } from "../../ai/client";
 import { readSearchDepth } from "../../strategy/searchDepth";
 import { emptyLeadCounts } from "../../leads/scout/counts";

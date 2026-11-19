@@ -7,7 +7,7 @@ import { openDevelopmentBrowser } from "./developmentBrowser.mjs";
  * bundle the child is served under a plan (owner decision, 2026-09-22: the
  * monthly Mac plan must be active for the app to be usable), and
  * `ENGAGER_MANAGED_APP` identifies maintained native execution
- * (`managedAppArmed()` in `packages/billing/entitlementClient.ts`).
+ * (`managedAppArmed()` in `packages/core/entitlements/entitlementClient.ts`).
  *
  * `inAppBundle` is passed in rather than probed: this module has no package
  * directory of its own to look at, and the caller already decided it once at

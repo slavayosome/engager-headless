@@ -1,7 +1,7 @@
 import {
   runtimeEntitlement,
   type RuntimeEntitlement,
-} from "@engager/billing/entitlement";
+} from "./entitlement";
 import type { Job } from "@engager/database/schema";
 import type { Tx } from "@engager/database/tenant";
 import { ownsCurrentJobLease } from "../jobs/lease";

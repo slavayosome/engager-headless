@@ -23,7 +23,7 @@ const INSTALL_ID_PATTERN = /^[0-9a-f]{32}$/;
 // before the provisioner set it still names its volume through the browser
 // journal and the vault, which the env contract has always required, so the id
 // lives beside them and is stable without an env roll. A `filePath?` parameter
-// is what tests use, the same shape packages/billing/license.ts's
+// is what tests use, the same shape packages/core/entitlements/license.ts's
 // licenseFilePath uses.
 export function installIdPath(env: NodeJS.ProcessEnv = process.env): string {
   const override = env.ENGAGER_INSTALL_ID_FILE?.trim();

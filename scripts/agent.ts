@@ -31,8 +31,8 @@ await assertNonSuperuserRole(); // refuse to run as a superuser (bypasses RLS)
 // origin read the licence gate, which core must not
 // import, so this process passes them in.
 const { startAgentTelemetry } = await import("@engager/core/telemetry/start");
-const { managedAccess } = await import("@engager/billing/entitlementClient");
-const { cloudBaseUrl } = await import("@engager/billing/cloudUrl");
+const { managedAccess } = await import("@engager/core/entitlements/entitlementClient");
+const { cloudBaseUrl } = await import("@engager/core/entitlements/cloudUrl");
 await startAgentTelemetry({
   paid: () => managedAccess().allowed,
   relayOrigin: cloudBaseUrl,
@@ -42,7 +42,7 @@ await startAgentTelemetry({
 // which core cannot import, so they are registered here. Any other process that
 // claims a report leaves it for this one.
 const { registerReportSources } = await import("@engager/core/reports/sources");
-const { reportAccountEmail, reportRelayTarget } = await import("@engager/billing/reportSources");
+const { reportAccountEmail, reportRelayTarget } = await import("@engager/core/entitlements/reportSources");
 registerReportSources({ accountEmail: reportAccountEmail, relayTarget: reportRelayTarget });
 const { materializeVaultMirrorAtBoot } = await import(
   "@engager/core/brain/mirror"

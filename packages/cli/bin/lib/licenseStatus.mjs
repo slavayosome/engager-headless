@@ -6,7 +6,7 @@
 // DISPLAY ONLY (INV-17): this decodes the cached token's payload segment
 // without verifying its Ed25519 signature. `engager.mjs` is dependency-free
 // plain JS -- it is not in build.mjs's ENTRIES, so nothing bundles it and it
-// cannot import verifyLicenseToken from packages/billing/license.ts.
+// cannot import verifyLicenseToken from packages/core/entitlements/license.ts.
 // Duplicating the baked public key and the verify logic here would be a
 // second implementation of a wire format that module owns alone. Reading
 // `exp` and `entitled` for display is exactly what INV-17 licenses;
@@ -30,7 +30,7 @@ function base64UrlDecode(input) {
  * database or the network. Never throws -- a doctor that crashes on a corrupt
  * file is worse than one that says "unreadable" -- and tolerates a missing
  * file, bad JSON, or a shape mismatch exactly as readCachedLicense
- * (packages/billing/license.ts) does, since it reads the same CachedLicense
+ * (packages/core/entitlements/license.ts) does, since it reads the same CachedLicense
  * shape.
  *
  * `now` and `filePath` are parameters for the same reason localEnv.mjs's
@@ -41,7 +41,7 @@ function base64UrlDecode(input) {
 export function licenseStatusLine(
   now,
   // Matches HOME_DIR in engager.mjs and licenseFilePath() in
-  // packages/billing/license.ts -- three places this location is spelled.
+  // packages/core/entitlements/license.ts -- three places this location is spelled.
   filePath = path.join(os.homedir(), ".engager", "license.json"),
 ) {
   let raw;

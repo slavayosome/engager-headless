@@ -504,7 +504,7 @@ export type ManagedSeatRefreshOutcome = CapabilityRefreshOutcome | "throttled";
  *
  * `register` is the action in every arm, including the periodic one:
  * `assignSeat` is idempotent on the same device key, consumes nothing the
- * second time and stamps `lastSeenAt` (`packages/billing/seats.ts`), so one
+ * second time and stamps `lastSeenAt` (`the cloud seat registry`), so one
  * action covers both taking a seat and renewing the claims a seat already held.
  */
 export async function refreshManagedSeat(

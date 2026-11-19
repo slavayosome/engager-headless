@@ -1,7 +1,7 @@
 import { and, eq, inArray, notInArray } from "drizzle-orm";
 import { actions } from "@engager/database/schema";
 import { withOrg } from "@engager/database/tenant";
-import { backgroundEntitlement, LICENSE_HOLD_RECHECK_MS } from "@engager/billing/entitlement";
+import { backgroundEntitlement, LICENSE_HOLD_RECHECK_MS } from "../../entitlements/entitlement";
 import { isGrant } from "../../connector/resolve";
 import {
   actionCapabilitiesFor,

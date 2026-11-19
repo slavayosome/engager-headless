@@ -1,16 +1,5 @@
 import { createHash } from "node:crypto";
 
-/**
- * Email provider abstraction.
- *
- * Two providers ship: Resend (real delivery) and Console (local/test fallback
- * that logs the complete plaintext email, including action links).
- *
- * The `resend` package is imported LAZILY (dynamic import inside `send`) so that
- * merely importing this module — or running the Console path — does not require
- * the `resend` dependency to be installed.
- */
-
 const DEFAULT_FROM = "Engager <noreply@example.com>";
 
 /** A file carried with an email: its bytes as base64, the way the provider's
@@ -41,9 +30,8 @@ export type EmailSendOptions = {
   signal?: AbortSignal;
 };
 
-export interface EmailProvider {
+interface EmailProvider {
   prepare(payload: EmailPayload): PreparedEmailPayload;
-  send(payload: EmailPayload, options?: EmailSendOptions): Promise<SendResult>;
   sendPrepared(
     payload: PreparedEmailPayload,
     options?: EmailSendOptions,
@@ -160,12 +148,7 @@ function isHostedRuntime(env: NodeJS.ProcessEnv = process.env): boolean {
   return false;
 }
 
-/**
- * Real delivery via Resend. The Resend SDK is loaded on first `send` so that
- * importing this provider (e.g. for type references or in tests that never call
- * the Resend path) does not require the `resend` package to be present.
- */
-export class ResendEmailProvider implements EmailProvider {
+class ResendEmailProvider implements EmailProvider {
   private readonly apiKey: string;
   private readonly from: string;
 
@@ -190,56 +173,42 @@ export class ResendEmailProvider implements EmailProvider {
     options: EmailSendOptions = {},
   ): Promise<SendResult> {
     options.signal?.throwIfAborted();
-    const { Resend } = await import("resend");
-    const client = new Resend(this.apiKey);
-    // Pinned Resend 4.8.0 spreads request options into fetch RequestInit, but
-    // its public type exposes only idempotency/query. Keep this compatibility
-    // cast narrow so the real fetch receives AbortSignal without widening our API.
-    type AbortableResendRequestOptions = NonNullable<
-      Parameters<typeof client.emails.send>[1]
-    > & { signal?: AbortSignal };
-    const requestOptions = {
-      ...(options.idempotencyKey
-        ? { idempotencyKey: options.idempotencyKey }
-        : {}),
-      ...(options.signal ? { signal: options.signal } : {}),
-    } as AbortableResendRequestOptions;
-
-    let response: Awaited<ReturnType<typeof client.emails.send>>;
+    const headers = new Headers({
+      Authorization: `Bearer ${this.apiKey}`,
+      "Content-Type": "application/json",
+    });
+    if (options.idempotencyKey) headers.set("Idempotency-Key", options.idempotencyKey);
+    const baseUrl = process.env.RESEND_BASE_URL || "https://api.resend.com";
     try {
-      response = await client.emails.send(
-        {
+      const response = await fetch(`${baseUrl}/emails`, {
+        method: "POST",
+        headers,
+        signal: options.signal,
+        body: JSON.stringify({
           from: payload.from,
           to: payload.to,
           subject: payload.subject,
           html: payload.html,
           text: payload.text ?? "",
-          replyTo: payload.replyTo,
-          ...(payload.attachments?.length
-            ? {
-                attachments: payload.attachments.map((attachment) => ({
-                  filename: attachment.filename,
-                  content: attachment.content,
-                  contentType: attachment.contentType,
-                })),
-              }
-            : {}),
-        },
-        Object.keys(requestOptions).length > 0 ? requestOptions : undefined,
-      );
-      // Resend currently converts a fetch abort into a generic error response.
-      // Restore the caller's abort semantics before interpreting that response.
-      options.signal?.throwIfAborted();
+          reply_to: payload.replyTo,
+          attachments: payload.attachments?.map(({ filename, content, contentType }) => ({
+            filename, content, content_type: contentType,
+          })),
+        }),
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw safeProviderError({ ...error, status: response.status });
+      }
+      const result = await response.json();
+      if (typeof result?.id !== "string" || !result.id) {
+        throw new Error("Resend did not return a delivery ID");
+      }
+      return { id: result.id };
     } catch (error) {
       options.signal?.throwIfAborted();
       throw safeProviderError(error);
     }
-
-    if (response.error) {
-      throw safeProviderError(response.error);
-    }
-
-    return { id: response.data?.id };
   }
 }
 
@@ -247,7 +216,7 @@ export class ResendEmailProvider implements EmailProvider {
  * Local/test fallback. The plaintext body is intentionally logged so links are
  * usable without an email vendor. Hosted runtimes may never select this provider.
  */
-export class ConsoleEmailProvider implements EmailProvider {
+class ConsoleEmailProvider implements EmailProvider {
   prepare(payload: EmailPayload): PreparedEmailPayload {
     return {
       ...payload,
@@ -284,7 +253,7 @@ export class ConsoleEmailProvider implements EmailProvider {
  * runtimes fail closed so verification/reset flows never claim a no-op email was
  * delivered.
  */
-export function getEmailProvider(): EmailProvider {
+function getEmailProvider(): EmailProvider {
   const apiKey = process.env.RESEND_API_KEY?.trim();
   const hosted = isHostedRuntime();
   if (apiKey) {
@@ -303,7 +272,17 @@ export function getEmailProvider(): EmailProvider {
   return new ConsoleEmailProvider();
 }
 
-/** Fail-fast readiness check used before non-enumerating auth flows branch. */
-export function assertEmailDeliveryConfigured(): void {
-  void getEmailProvider();
+/** Resolve the sender and freeze the exact provider request without sending. */
+export function prepareEmailPayload(
+  payload: EmailPayload,
+): PreparedEmailPayload {
+  return getEmailProvider().prepare(payload);
+}
+
+/** Send a previously frozen provider request (including its original sender). */
+export function sendPreparedEmail(
+  payload: PreparedEmailPayload,
+  options?: EmailSendOptions,
+): Promise<SendResult> {
+  return getEmailProvider().sendPrepared(payload, options);
 }

@@ -21,7 +21,6 @@
     "./uiActions": "./uiActions.ts"
   },
   "dependencies": {
-    "@engager/billing": "*",
     "@engager/common": "*",
     "@sentry/node": "^10.65.0",
     "posthog-node": "^4.16.0",

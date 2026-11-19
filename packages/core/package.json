@@ -287,7 +287,6 @@
     "./operations/postSnippets": "./operations/postSnippets.ts",
     "./operations/appCardSession": "./operations/appCardSession.ts",
     "./commentLength": "./commentLength.ts",
-    "./operations/trialRenewal": "./operations/trialRenewal.ts",
     "./operations/scoutHealth": "./operations/scoutHealth.ts",
     "./operations/scoutToday": "./operations/scoutToday.ts",
     "./operations/schedule": "./operations/schedule.ts",
@@ -343,11 +342,14 @@
     "./dispatcher/types": "./dispatcher/types.ts",
     "./dispatcher/writer": "./dispatcher/writer.ts",
     "./dispatcher/runAttempts": "./dispatcher/runAttempts.ts",
-    "./dispatcher/landedJudge": "./dispatcher/landedJudge.ts"
+    "./dispatcher/landedJudge": "./dispatcher/landedJudge.ts",
+    "./entitlements/licenseClient": "./entitlements/licenseClient.ts",
+    "./entitlements/reportSources": "./entitlements/reportSources.ts",
+    "./entitlements/entitlementClient": "./entitlements/entitlementClient.ts",
+    "./entitlements/cloudUrl": "./entitlements/cloudUrl.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.110.0",
-    "@engager/billing": "*",
     "@engager/common": "*",
     "@engager/database": "*",
     "@engager/observability": "*",

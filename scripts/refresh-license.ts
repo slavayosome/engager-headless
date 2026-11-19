@@ -1,5 +1,5 @@
 // Explicit cloud-control credential refresh; never called by a free background tick.
-import { refreshCloudCredentials } from "@engager/billing/licenseClient";
+import { refreshCloudCredentials } from "@engager/core/entitlements/licenseClient";
 
 const pathIndex = process.argv.indexOf("--path");
 const path = pathIndex >= 0 ? process.argv[pathIndex + 1] : undefined;

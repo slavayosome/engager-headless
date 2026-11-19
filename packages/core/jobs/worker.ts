@@ -50,7 +50,6 @@ import { handleNotifyLead } from "./handlers/notifyLead";
 import { handleReconcileMessageWrite } from "./handlers/reconcileMessageWrite";
 import { handleProcessIncomingPhased } from "./handlers/processIncoming";
 import { handleRefreshBrain } from "./handlers/refreshBrain";
-import { handleReconcileTrialRenewal } from "./handlers/reconcileTrialRenewal";
 import { handleActivateStrategy } from "./handlers/activateStrategy";
 import { handleReprojectCampaigns } from "./handlers/reprojectCampaigns";
 import { handleAgentStepTimeout } from "./handlers/agentStepTimeout";
@@ -238,7 +237,6 @@ const SELF_SCOPED: Partial<Record<Job["type"], SelfScopedHandler>> = {
   check_stale_leads: handleCheckStaleLeads,
   // Trial renewal is released only from immutable activation authority. Stripe
   // runs between two short DB scopes, never inside a held org transaction.
-  reconcile_trial_renewal: handleReconcileTrialRenewal,
   // The dispatch gate commits `dispatching` before the click and settles after
   // it, each in its own short transaction — the action ledger's two-phase send.
   dispatch_actions: handleDispatchActions,
@@ -386,7 +384,6 @@ async function runClaimed(
   }
 
   const boundedPrepaymentOrRecovery = new Set<Job["type"]>([
-    "reconcile_trial_renewal",
     "forget_spotted",
     // Usage data is sent by every install, a lapsed plan included.
     "install_active",
@@ -872,10 +869,6 @@ export const TYPE_BUDGET_MS: Partial<Record<Job["type"], number>> = {
   // 25 posts against the CLI's own 180s ceiling, so this belongs to the
   // continuous worker and must never be claimed by a short serverless drain.
   notify_lead: 90_000, // profile-budgeted enrichment + email send
-  // Stateless discovery plus ten-way bounded filter batches fits the 60s
-  // serverless drainer. First value must not depend on an optional continuous
-  // worker being healthy.
-  reconcile_trial_renewal: 40_000, // Stripe read + guarded update + canonical refetch
   // Up to DRAIN_LIMIT likes, each a thread read and a page load with the like
   // op's own confirmation wait — never a short serverless drain.
   dispatch_actions: 240_000,
@@ -908,7 +901,6 @@ export const TYPE_BUDGET_MS: Partial<Record<Job["type"], number>> = {
 const PREP_TYPES: ReadonlySet<Job["type"]> = new Set<Job["type"]>([
   "ingest_product",
   "compile_campaign",
-  "reconcile_trial_renewal",
   // The owner watches "Sending report…" in the sidebar, and a report touches
   // neither the browser nor the account: an agent call and one POST.
   "file_bug_report",

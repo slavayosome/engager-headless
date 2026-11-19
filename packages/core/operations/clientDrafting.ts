@@ -24,7 +24,7 @@ import {
   type Message,
 } from "@engager/database/schema";
 import { withOrg, type Tx } from "@engager/database/tenant";
-import { runtimeEntitlement } from "@engager/billing/entitlement";
+import { runtimeEntitlement } from "../entitlements/entitlement";
 import { isAssisted, isUntouchedOffer, measureBoxAssist } from "@engager/common/text-provenance";
 import { boxKey, composerOffered, higherRetention, measureComposer } from "../composer/drafts";
 import { assertJudgedWords } from "../dispatcher/landedJudge";

@@ -4,7 +4,7 @@ import { withLicenseRefreshLock } from "./licenseCacheLock.mjs";
 // This module never holds a device code: it only ever sees the local
 // dashboard proxy's own answers, and those answers never carry one -- see
 // apps/dashboard/app/api/license/device/route.ts's module doc for why. It
-// cannot import packages/billing/license.ts's writeCachedLicense either --
+// cannot import packages/core/entitlements/license.ts's writeCachedLicense either --
 // packages/cli/bin/engager.mjs is dependency-free plain JS with no type
 // surface -- which is the whole reason `login` proxies through the
 // dashboard's Next server instead of calling the cloud itself.
@@ -174,7 +174,7 @@ export async function licenseLogin({
  * `HOME_DIR`, `path.join(os.homedir(), ".engager")`). Spelled here ONCE so
  * `licenseLogout` below and `engager.mjs`'s `logout` arm never restate it
  * independently -- and so `defaultLicenseFilePath` (also below) and
- * packages/billing/license.ts's `licenseFilePath()` can be pinned equal by a
+ * packages/core/entitlements/license.ts's `licenseFilePath()` can be pinned equal by a
  * real test instead of a comment. */
 export function cachedLicensePath(homeDir) {
   return path.join(homeDir, "license.json");
@@ -184,13 +184,13 @@ export function cachedLicensePath(homeDir) {
  * `engager.mjs` actually deletes on a real `engager logout`. Exists
  * separately from `cachedLicensePath` so `licenseLogin.test.ts` can pin this
  * SPECIFIC path, computed independently of any injected test directory,
- * against packages/billing/license.ts's `licenseFilePath()`. */
+ * against packages/core/entitlements/license.ts's `licenseFilePath()`. */
 export function defaultLicenseFilePath() {
   return cachedLicensePath(path.join(os.homedir(), ".engager"));
 }
 
 /** Where the signed capability claims live under the same `homeDir` --
- * `entitlementCachePath()` in packages/billing/entitlementCache.ts, spelled
+ * `entitlementCachePath()` in packages/core/entitlements/entitlementCache.ts, spelled
  * here for the same reason `cachedLicensePath` is: this module reaches no
  * TypeScript, and `licenseLogin.test.ts` pins the two equal. */
 export function cachedClaimsPath(homeDir) {

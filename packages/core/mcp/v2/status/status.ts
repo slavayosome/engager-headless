@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { commercialProjection } from "@engager/billing/projection";
+import { commercialProjection } from "../../../entitlements/projection";
 import { withOrg } from "@engager/database/tenant";
 import { getSetupState, completeMcpSetup, SetupWorkflowRequiredError } from "../../../operations/setup";
 import { setupHandoff } from "../../../operations/setupHandoff";

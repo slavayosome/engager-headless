@@ -1,7 +1,7 @@
 import { execFile, spawn as spawnChild } from "node:child_process";
 import { existsSync, mkdirSync, watch } from "node:fs";
 import { and, eq, inArray, isNull } from "drizzle-orm";
-import { backgroundEntitlement } from "@engager/billing/entitlement";
+import { backgroundEntitlement } from "../entitlements/entitlement";
 import { db as baseDb } from "@engager/database";
 import { campaigns, organizations, workers } from "@engager/database/schema";
 import { withOrg, type Tx } from "@engager/database/tenant";

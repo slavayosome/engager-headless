@@ -1,5 +1,5 @@
-import { managedAccess, managedAppArmed } from "@engager/billing/entitlementClient";
-import { commercialProjection } from "@engager/billing/projection";
+import { managedAccess, managedAppArmed } from "../entitlements/entitlementClient";
+import { commercialProjection } from "../entitlements/projection";
 import type { Tx } from "@engager/database/tenant";
 import { restartBudget, type SupervisedState } from "./lifecycle";
 import { lastVerifiedBackup, listMaintenanceReceipts } from "./maintenance";

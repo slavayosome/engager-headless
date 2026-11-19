@@ -5,7 +5,7 @@
 // covers a domain-separated payload (`engager-license-v2\n<payload>`), so a
 // previously issued v1 token cannot be replayed as v2 authority even though
 // both are signed by the same Ed25519 key and even if its `v` field were
-// rewritten: the signature simply does not verify. `packages/billing/license.ts`
+// rewritten: the signature simply does not verify. `packages/core/entitlements/license.ts`
 // keeps verifying v1 for the historical hosted flow, and neither verifier can
 // accept the other's tokens.
 //

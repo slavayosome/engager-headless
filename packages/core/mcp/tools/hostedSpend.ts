@@ -1,4 +1,4 @@
-import { runtimeEntitlement } from "@engager/billing/entitlement";
+import { runtimeEntitlement } from "../../entitlements/entitlement";
 import { type ApiKeyScope } from "@engager/database/schema";
 import type { Tx } from "@engager/database/tenant";
 import { withOrg } from "@engager/database/tenant";

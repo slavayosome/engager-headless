@@ -1,4 +1,4 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { subscriptions } from "@engager/database/schema";
 import type { Tx } from "@engager/database/tenant";
 import type { Capability } from "./capabilities";
@@ -306,39 +306,4 @@ export async function commercialProjection(
 ): Promise<CommercialProjection> {
   const row = await canonicalRow(tx, organizationId, opts.lock === true);
   return projectSubscriptionRow(organizationId, row, opts.now ?? Date.now());
-}
-
-export function hasCapability(
-  projection: CommercialProjection,
-  capability: Exclude<Capability, "core_local">,
-): boolean {
-  return projection.capabilities.includes(capability);
-}
-
-/**
- * Assign this subscription's paid generation, once, under an organization-wide
- * lock. Existing rows keep the generation they were first given, so a replayed
- * event is idempotent and a reordered one cannot renumber itself to the front.
- */
-export async function assignCommercialGeneration(
-  tx: Tx,
-  organizationId: string,
-  subscriptionId: string,
-): Promise<number> {
-  await tx.execute(
-    sql`select pg_advisory_xact_lock(hashtextextended(${`commercial-generation:${organizationId}`}, 0))`,
-  );
-  const [existing] = await tx
-    .select({ generation: subscriptions.commercialGeneration })
-    .from(subscriptions)
-    .where(eq(subscriptions.id, subscriptionId));
-  if (existing && existing.generation > 0) return existing.generation;
-
-  const [highest] = await tx
-    .select({ generation: subscriptions.commercialGeneration })
-    .from(subscriptions)
-    .where(eq(subscriptions.organizationId, organizationId))
-    .orderBy(desc(subscriptions.commercialGeneration))
-    .limit(1);
-  return (highest?.generation ?? 0) + 1;
 }

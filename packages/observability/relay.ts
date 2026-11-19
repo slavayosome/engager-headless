@@ -7,14 +7,14 @@
  * caller, and again in the route.
  *
  * Mirrors — does not import — the fetch idiom of `request()` in
- * packages/billing/licenseClient.ts: a single POST, `content-type:
+ * packages/core/entitlements/licenseClient.ts: a single POST, `content-type:
  * application/json`, and an `AbortSignal` timeout. Unlike `request()` it never
  * retries: `licenseClient`'s `MAX_ATTEMPTS` budget exists because a license
  * answer is load-bearing, and a dropped batch is not worth a retry storm. And
  * it never throws: a failed flush drops its batch, because telemetry must
  * never break a product path.
  */
-import { CLOUD_BASE_URL } from "@engager/billing/controlOrigin";
+import { CLOUD_BASE_URL } from "@engager/common/controlOrigin";
 
 const RELAY_REQUEST_TIMEOUT_MS = 10_000;
 

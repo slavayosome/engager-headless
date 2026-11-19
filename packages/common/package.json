@@ -18,6 +18,7 @@
     "./trial-reminder": "./trial-reminder.ts",
     "./version": "./version.ts",
     "./build-sha": "./build-sha.ts",
-    "./problem-report": "./problem-report.ts"
+    "./problem-report": "./problem-report.ts",
+    "./controlOrigin": "./controlOrigin.ts"
   }
 }
