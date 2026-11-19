@@ -14,7 +14,7 @@
 
 <p align="center"><a href="#quick-start">Quick start</a> · <a href="#try-it-with-your-agent">Example prompts</a> · <a href="https://getengager.com">Mac app</a></p>
 
-Find potential customers through public conversations. Give Engager your audience and your product. Scout finds people who fit and shows you why.
+Find potential customers through public conversations. Give Engager your audience and your product. **Scout** finds people who fit and shows you why. **Ambassador** helps you engage with them through comments, replies, connection requests, and direct messages.
 
 **Channels** · LinkedIn is available today. X is coming soon.
 
