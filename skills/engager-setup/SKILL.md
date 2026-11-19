@@ -1,6 +1,6 @@
 ---
 name: engager-setup
-version: 0.0.100
+version: 0.0.101
 description: First-run path for a local Engager install. Check the stack, connect the Channel (the LinkedIn session in Engager's own browser), confirm which Agent thinks for Engager, seed the Brain and a provisional Voice from the owner's own posts, record one product or skip it, then hand off to engager-campaigns. Setup creates no campaign. Use for "set up Engager", "first run", "connect my LinkedIn", or when get_status shows setup unfinished.
 ---
 
@@ -54,9 +54,11 @@ password there; you never see it.
 2. Read `connection.status` and `probe`. If the status is `live`, report the
    account name shown, if any, and move on.
 3. If the status is `needs_signin`, `not_configured` or `no_session`, ask the
-   owner to open Engager's browser from Channels, then LinkedIn, and sign in.
-   The probe does not wait for sign-in. Probe again after they say they are
-   done. One more attempt at most, then `sections/troubleshooting.md`.
+   owner whether they want to sign in. On their yes, call `get_channel` with
+   `probe: true`, `openSignIn: true` and `waitForSignInMs: 30000`. They sign
+   in directly in the browser on their Mac. If they need more time, recheck
+   with `recheck: true` in place of `openSignIn`. A probe error belongs in
+   `sections/troubleshooting.md`.
 4. Report a probe error or refusal as returned; use troubleshooting rather
    than inferring a stack failure from a missing connector field.
 
