@@ -62,10 +62,9 @@ password there; you never see it.
 4. Report a probe error or refusal as returned; use troubleshooting rather
    than inferring a stack failure from a missing connector field.
 
-Live writes are off until the owner turns them on in Engager (Channels,
-LinkedIn). That switch is theirs: never infer it, never ask for it, never
-describe posting as enabled. Caps and pacing belong to the account and are
-**engager-status**'s to explain.
+Signing in confirms the account. Only report posting availability from the
+account's recorded settings and the campaign's modes. Never change write
+authority during setup. **engager-status** explains the account's caps and pacing.
 
 Gate: `live`, or the owner defers. If they defer, say plainly that nothing
 can run until they sign in, and carry on.
